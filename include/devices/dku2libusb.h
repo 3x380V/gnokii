@@ -20,7 +20,7 @@
 #include "misc.h"
 #include "gnokii.h"
 
-int fbusdku2usb_open(struct gn_statemachine *state);
+int fbusdku2usb_open(gn_config *cfg, struct gn_statemachine *state);
 int fbusdku2usb_close(struct gn_statemachine *state);
 int fbusdku2usb_write(const __ptr_t bytes, int size, struct gn_statemachine *state);
 int fbusdku2usb_read(__ptr_t bytes, int size, struct gn_statemachine *state);
