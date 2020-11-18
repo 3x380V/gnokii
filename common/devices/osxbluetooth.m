@@ -120,21 +120,21 @@ static int next_fd = 1;
 }
 @end
 
-int bluetooth_open(gn_config *cfg, struct gn_statemachine* state)
+void* bluetooth_open(gn_config *cfg, int with_odd_parity, int with_async)
 {
     if (queues == nil)
         queues = [NSMutableDictionary dictionaryWithCapacity:1];
     GnokiiOSXBluetooth *q = [[GnokiiOSXBluetooth alloc] init];
     if (![q connect:cfg->port_device chid:(BluetoothRFCOMMChannelID)cfg->rfcomm_cn]) { // after connection it is established.. the delegates methods are triggered.
         [q release];
-        return -1;
+        return NULL;
     }
     int ret = next_fd++;
     [queues setObject:q forKey:@(ret)];
     return ret;
 }
 
-int bluetooth_write(int fd, const __ptr_t bytes, int size, struct gn_statemachine *state)
+size_t bluetooth_write(void *instance, const __ptr_t bytes, size_t size)
 {
     if (queues == nil)
         return -1;
@@ -147,7 +147,7 @@ int bluetooth_write(int fd, const __ptr_t bytes, int size, struct gn_statemachin
     return size;
 }
 
-int bluetooth_read(int fd, __ptr_t bytes, int size, struct gn_statemachine *state)
+size_t bluetooth_read(void *instance, __ptr_t bytes, size_t size)
 {
     if (queues == nil)
         return -1;
@@ -157,7 +157,7 @@ int bluetooth_read(int fd, __ptr_t bytes, int size, struct gn_statemachine *stat
     return [q read:bytes size:size];
 }
 
-int bluetooth_select(int fd, struct timeval *timeout, struct gn_statemachine *state)
+int bluetooth_select(void *instance, struct timeval *timeout)
 {
     if (queues == nil)
         return -1;
@@ -168,16 +168,15 @@ int bluetooth_select(int fd, struct timeval *timeout, struct gn_statemachine *st
     return [q select:(NSTimeInterval)(timeout->tv_sec + timeout->tv_usec / 1000000.0)];
 }
 
-int bluetooth_close(int fd, struct gn_statemachine *state)
+void bluetooth_close(void *instance)
 {
     if (queues == nil)
-        return -1;
+        return;
     GnokiiOSXBluetooth *q = [queues objectForKey:@(fd)];
     if (q == nil)
-        return -1;
+        return;
     [q release];
     [queues removeObjectForKey:@(fd)];
-    return 1;
 }
 
 #endif
