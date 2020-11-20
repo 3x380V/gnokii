@@ -94,8 +94,7 @@ xnetbsd*)
 esac
 
 dnl ======================== Libtool versioning
-AC_LIBTOOL_WIN32_DLL
-define([AC_PROVIDE_AC_LIBTOOL_WIN32_DLL])
+LT_INIT([win32-dll])
 AC_PROG_LIBTOOL
 
 #

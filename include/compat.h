@@ -124,22 +124,11 @@
 #  define INT_MAX 2147483647
 #endif
 
-/*
- * The following ifdef block is the standard way of creating macros which make
- * exporting from a DLL simpler. All files within this DLL are compiled with
- * the GNOKIIDLL_EXPORTS symbol defined on the command line. this symbol should
- * not be defined on any project that uses this DLL. This way any other project
- * whose source files include this file see API functions as being imported
- * from a DLL, whereas this DLL sees symbols defined with this macro as being
- * exported.
- */
 #if defined(WIN32)
-#  if defined(GNOKIIDLL_EXPORTS) || defined(_USRDLL) || defined(DLL_EXPORT)
+#  if defined(COMPILING_LIBGNOKII) || defined(DLL_EXPORT)
 #    define GNOKII_API __declspec(dllexport)
-#  elif defined(GNOKIIDLL_IMPORTS)
-#    define GNOKII_API __declspec(dllimport)
 #  else
-#    define GNOKII_API
+#    define GNOKII_API __declspec(dllimport)
 #  endif
 #elif (__GNUC__ - 0 > 3 || __GNUC__ == 3 && __GNUC_MINOR__ > 3)
 #    define GNOKII_API __attribute__ ((visibility("default")))

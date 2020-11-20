@@ -1,17 +1,18 @@
-DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
-
 bin_PROGRAMS = gnokii
 gnokii_SOURCES = gnokii.c gnokii-calendar.c gnokii-dial.c gnokii-file.c gnokii-logo.c gnokii-mms.c \
 	gnokii-monitor.c \
 	gnokii-other.c gnokii-phonebook.c gnokii-profile.c gnokii-ringtone.c gnokii-security.c \
 	gnokii-settings.c gnokii-sms.c gnokii-todo.c gnokii-utils.c gnokii-wap.c gnokii-app.h
 
+gnokii_CFLAGS = \
+	-DLOCALEDIR=\"$(localedir)\" \
+	-I$(top_srcdir)/include
+
 gnokii_LDADD = \
 	$(top_builddir)/common/libgnokii.la \
 	$(INTLLIBS) \
 	$(TERMLDFLAGS) \
 	$(TERMLIBS)
-gnokii_CFLAGS = -I$(top_srcdir)/include
 
 # Following http://sourceware.org/ml/automake/2000-08/msg00014.html:
 # Compile getopt1.c and getopt.c unconditionally on all platforms, it

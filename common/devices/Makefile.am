@@ -35,6 +35,7 @@ endif
 libDEVICES_la_SOURCES = $(gnokii_devices)
 
 libDEVICES_la_CFLAGS =		\
+	$(DEFS)			\
 	-I$(top_srcdir)/include
 
 libDEVICES_la_LIBADD =		\

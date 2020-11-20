@@ -1,4 +1,4 @@
-DEFS = -DLOCALEDIR=\"$(localedir)\" -DCOMPILING_LIBGNOKII @DEFS@
+DEFS = -DCOMPILING_LIBGNOKII @DEFS@
 
 if WIN32
 DATA_DIR = 
@@ -22,8 +22,11 @@ LIBS   += $(LIBPCSCLITE_LIBS) $(GLIB_LIBS)
 pkgconfig_DATA = gnokii.pc
 pkgconfigdir = $(libdir)/pkgconfig
 
-libgnokii_la_CPPFLAGS = -DLIBDIR="\"$(libdir)\""
-libgnokii_la_CFLAGS = -I$(top_srcdir)/include $(GLIB_CFLAGS) \
+libgnokii_la_CPPFLAGS = \
+	-DLIBDIR=\"$(libdir)\" -DLOCALEDIR=\"$(localedir)\" \
+	$(DEFS)
+libgnokii_la_CFLAGS = \
+	-I$(top_srcdir)/include $(GLIB_CFLAGS) \
 	$(ICAL_CFLAGS)
 
 libgnokii_la_SOURCES = \

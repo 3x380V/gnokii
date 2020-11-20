@@ -1,5 +1,3 @@
-AM_CFLAGS = $(LIBPCSCLITE_CFLAGS)
-
 noinst_LTLIBRARIES = libPHONES.la
 libPHONES_la_SOURCES = \
 	generic.c \
@@ -25,8 +23,9 @@ libPHONES_la_SOURCES = \
 	pcsc.c
 
 libPHONES_la_CFLAGS =		\
+	$(DEFS)			\
 	-I$(top_srcdir)/include	\
-	$(AM_CFLAGS)
+	$(LIBPCSCLITE_CFLAGS)
 
 EXTRA_DIST = nk2110.c dc2711.c
 
