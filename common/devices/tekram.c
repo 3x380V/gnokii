@@ -41,7 +41,22 @@ void tekram_close(void *instance)
 	serial_close(instance);
 }
 
-void tekram_reset(void *instance)
+int tekram_select(void *instance, struct timeval *timeout)
+{
+	return serial_select(instance, timeout);
+}
+
+size_t tekram_read(void *instance, __ptr_t buf, size_t nbytes)
+{
+	return serial_read(instance, buf, nbytes);
+}
+
+size_t tekram_write(void *instance, const __ptr_t buf, size_t n)
+{
+	return serial_write(instance, buf, n);
+}
+
+static void tekram_reset(void *instance)
 {
 	serial_setdtrrts(instance, 0, 0);
 	usleep(50000);
@@ -52,7 +67,7 @@ void tekram_reset(void *instance)
 	serial_changespeed(instance, 9600);
 }
 
-void tekram_changespeed(void *instance, int speed)
+gn_error tekram_changespeed(void *instance, int speed)
 {
 	unsigned char speedbyte;
 	switch (speed) {
@@ -69,20 +84,10 @@ void tekram_changespeed(void *instance, int speed)
 	serial_write(instance, &speedbyte, 1);
 	usleep(100000);
 	serial_setdtrrts(instance, 1, 1);
-	serial_changespeed(instance, speed);
+	return serial_changespeed(instance, speed);
 }
 
-size_t tekram_read(void *instance, __ptr_t buf, size_t nbytes)
+void tekram_setdtrrts(void *instance, int dtr, int rts)
 {
-	return serial_read(instance, buf, nbytes);
-}
-
-size_t tekram_write(void *instance, const __ptr_t buf, size_t n)
-{
-	return serial_write(instance, buf, n);
-}
-
-int tekram_select(void *instance, struct timeval *timeout)
-{
-	return serial_select(instance, timeout);
+	serial_setdtrrts(instance, dtr, rts);
 }
