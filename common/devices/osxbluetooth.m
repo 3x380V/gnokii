@@ -160,3 +160,9 @@ void bluetooth_close(void *instance)
     GnokiiOSXBluetooth *q = *(GnokiiOSXBluetooth **)instance;
     [q release];
 }
+
+int bluetooth_getfd(void *instance)
+{
+    /* FIXME: Any way to get a file descriptor from IOBluetooth object? */
+    return -1;
+}

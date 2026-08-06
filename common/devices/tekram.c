@@ -50,6 +50,11 @@ size_t tekram_write(void *instance, const __ptr_t buf, size_t n)
 	return serial_write(instance, buf, n);
 }
 
+int tekram_getfd(void *instance)
+{
+	return serial_getfd(instance);
+}
+
 static void tekram_reset(void *instance)
 {
 	serial_setdtrrts(instance, 0, 0);

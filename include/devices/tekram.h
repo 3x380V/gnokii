@@ -30,6 +30,8 @@ int tekram_select(void *instance, struct timeval *timeout);
 size_t tekram_read(void *instance, __ptr_t buf, size_t nbytes);
 size_t tekram_write(void *instance, const __ptr_t buf, size_t n);
 
+int tekram_getfd(void *instance);
+
 gn_error tekram_changespeed(void *instance, int speed);
 void tekram_setdtrrts(void *instance, int dtr, int rts);
 
