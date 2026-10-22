@@ -85,7 +85,7 @@ void GUI_CreateDataWindow(void)
 	gtk_window_set_title(GTK_WINDOW(GUI_DataWindow), _("Virtual Modem"));
 	gtk_container_set_border_width(GTK_CONTAINER(GUI_DataWindow), 10);
 	gtk_signal_connect(GTK_OBJECT(GUI_DataWindow), "delete_event",
-			   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+			   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 
 	vbox = gtk_vbox_new(FALSE, 1);
 	gtk_container_border_width(GTK_CONTAINER(vbox), 1);

@@ -272,7 +272,7 @@ void GUI_CreateNetmonWindow()
 	gtk_window_set_title(GTK_WINDOW(GUI_NetmonWindow), _("Net Monitor"));
 	//gtk_widget_set_usize (GTK_WIDGET (GUI_NetmonWindow), 436, 220);
 	gtk_signal_connect(GTK_OBJECT(GUI_NetmonWindow), "delete_event",
-			   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+			   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 	gtk_widget_realize(GUI_NetmonWindow);
 
 	accel_group = gtk_accel_group_new();

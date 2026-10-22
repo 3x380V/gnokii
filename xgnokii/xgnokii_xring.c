@@ -448,8 +448,7 @@ static void set_ringtone_info(gn_ringtone *ringtone)
 	gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(gi.tempo_combo)->entry), buf);
 }
 
-/* When invoked (via signal delete_event), terminates the application */
-static void close_application(GtkWidget * widget, GdkEvent * event, gpointer data)
+static void close_application(GtkWidget *w)
 {
 	if (gi.file_name) {
 		g_free(gi.file_name);
@@ -459,6 +458,13 @@ static void close_application(GtkWidget * widget, GdkEvent * event, gpointer dat
 
 //	gdk_key_repeat_restore();
 	gtk_widget_hide(gi.w);
+}
+
+/* When invoked (via signal delete_event), terminates the application */
+static gboolean delete_event(GtkWidget * widget, GdkEvent * event, gpointer data)
+{
+	close_application(widget);
+	return TRUE;
 }
 
 static int key_map(gint keysym)
@@ -825,7 +831,7 @@ void GUI_CreateXringWindow(void)
 	gtk_container_set_border_width(GTK_CONTAINER(gi.w), 4);
 
 	gtk_signal_connect(GTK_OBJECT(gi.w), "delete_event",
-			   GTK_SIGNAL_FUNC(close_application), &gi);
+			   GTK_SIGNAL_FUNC(delete_event), &gi);
 
 	gtk_widget_realize(gi.w);
 

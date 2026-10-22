@@ -566,7 +566,7 @@ static void DelSMS(void)
 		gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
 		gtk_container_set_border_width(GTK_CONTAINER(dialog), 10);
 		gtk_signal_connect(GTK_OBJECT(dialog), "delete_event",
-				   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+				   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 
 		button = gtk_button_new_with_label(_("Ok"));
 		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->action_area),
@@ -764,7 +764,7 @@ create_SaveSMStoMailbox (void)
                       GTK_SIGNAL_FUNC (OKSaveSMStoMailbox),
                       (gpointer) SaveSMStoMailbox);
   gtk_signal_connect(GTK_OBJECT(SaveSMStoMailbox), "delete_event",
-		     GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+		     GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
   gtk_signal_connect (GTK_OBJECT (cancel_button1), "clicked",
                       GTK_SIGNAL_FUNC (CancelDialog),
                       (gpointer) SaveSMStoMailbox );
@@ -960,20 +960,19 @@ static inline void CheckAddress(void)
 }
 
 
-static void DeleteSelectContactDialog(GtkWidget * widget, GdkEvent * event,
-				      SelectContactData * data)
-{
-	gtk_widget_destroy(GTK_WIDGET(data->clist));
-	gtk_widget_destroy(GTK_WIDGET(data->clistScrolledWindow));
-	gtk_widget_destroy(GTK_WIDGET(widget));
-}
-
-
 static void CancelSelectContactDialog(GtkWidget * widget, SelectContactData * data)
 {
 	gtk_widget_destroy(GTK_WIDGET(data->clist));
 	gtk_widget_destroy(GTK_WIDGET(data->clistScrolledWindow));
 	gtk_widget_destroy(GTK_WIDGET(data->dialog));
+}
+
+
+static gboolean DeleteSelectContactDialog(GtkWidget * widget, GdkEvent * event,
+					  SelectContactData * data)
+{
+	CancelSelectContactDialog(widget, data);
+	return TRUE;
 }
 
 
@@ -1281,7 +1280,7 @@ static void CreateSMSSendWindow(void)
 	gtk_widget_set_usize (GTK_WIDGET (sendSMS.SMSSendWindow), 436, 220);
 
 	gtk_signal_connect(GTK_OBJECT(sendSMS.SMSSendWindow), "delete_event",
-			   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+			   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 	gtk_widget_realize(sendSMS.SMSSendWindow);
 
 	accel_group = gtk_accel_group_new();
@@ -1675,7 +1674,7 @@ void GUI_CreateSMSWindow(void)
 	gtk_widget_set_usize (GTK_WIDGET (GUI_SMSWindow), 436, 220);
 	*/
 	gtk_signal_connect(GTK_OBJECT(GUI_SMSWindow), "delete_event",
-			   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+			   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 	gtk_widget_realize(GUI_SMSWindow);
 
 	accel_group = gtk_accel_group_new();

@@ -345,7 +345,7 @@ static void CreateInCallDialog(void)
 	gtk_window_set_title(GTK_WINDOW(inCallDialog.dialog), _("Call in progress"));
 	gtk_container_set_border_width(GTK_CONTAINER(inCallDialog.dialog), 5);
 	gtk_signal_connect(GTK_OBJECT(inCallDialog.dialog), "delete_event",
-			   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+			   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 
 	hbox = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(inCallDialog.dialog)->vbox), hbox, FALSE, FALSE, 5);
@@ -1157,7 +1157,7 @@ static GtkWidget *CreateAboutDialog(void)
 	dialog = gtk_dialog_new();
 	gtk_window_set_title(GTK_WINDOW(dialog), _("About"));
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 10);
-	gtk_signal_connect(GTK_OBJECT(dialog), "delete_event", GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+	gtk_signal_connect(GTK_OBJECT(dialog), "delete_event", GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 	button = gtk_button_new_with_label(_("Ok"));
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->action_area), button, TRUE, FALSE, 5);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(GUI_HideAbout), NULL);
@@ -1196,10 +1196,11 @@ static inline void SetValidity(GtkWidget * item, gpointer data)
 }
 
 
-static inline void OptionsDeleteEvent(GtkWidget * widget, GdkEvent * event, gpointer data)
+static inline gboolean OptionsDeleteEvent(GtkWidget * widget, GdkEvent * event, gpointer data)
 {
 	gtk_widget_hide(GTK_WIDGET(widget));
 	optionsDialogIsOpened = FALSE;
+	return TRUE;
 }
 
 
@@ -1328,7 +1329,7 @@ static void ShowEditSMSSetDialog(GtkWidget * w, gpointer data)
 		gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
 		gtk_container_set_border_width(GTK_CONTAINER(dialog), 10);
 		gtk_signal_connect(GTK_OBJECT(dialog), "delete_event",
-				   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+				   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 
 		button = gtk_button_new_with_label(_("Ok"));
 		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->action_area),

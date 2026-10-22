@@ -404,13 +404,6 @@ static void CloseContacts(GtkWidget * w, gpointer data)
 }
 
 
-/* I don't want to allow window to close */
-static void ProgressDialogDeleteEvent(GtkWidget * w, gpointer data)
-{
-	return;
-}
-
-
 static void CancelEditDialog(GtkWidget * widget, gpointer data)
 {
 	((EditEntryData *) data)->pbEntry->status = E_Empty;
@@ -839,7 +832,7 @@ static void CreateSubEntriesDialog(EditEntryData * editSubEntriesData, gchar * t
 	gtk_window_set_modal(GTK_WINDOW(editSubEntriesData->dialog), TRUE);
 	gtk_container_set_border_width(GTK_CONTAINER(editSubEntriesData->dialog), 10);
 	gtk_signal_connect(GTK_OBJECT(editSubEntriesData->dialog), "delete_event",
-			   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+			   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 
 	button = gtk_button_new_with_label(_("Ok"));
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(editSubEntriesData->dialog)->action_area),
@@ -1083,7 +1076,7 @@ static void EditNumbers(GtkWidget * widget, EditEntryData *editEntryData)
 
 		gtk_container_set_border_width(GTK_CONTAINER(editNumbersData.dialog), 10);
 		gtk_signal_connect(GTK_OBJECT(editNumbersData.dialog), "delete_event",
-				   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+				   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 
 		button = gtk_button_new_with_label(_("Ok"));
 		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(editNumbersData.dialog)->action_area),
@@ -1219,7 +1212,7 @@ static void CreateEditDialog(EditEntryData * editEntryData, gchar * title, GtkSi
 	gtk_window_set_modal(GTK_WINDOW(editEntryData->dialog), TRUE);
 	gtk_container_set_border_width(GTK_CONTAINER(editEntryData->dialog), 10);
 	gtk_signal_connect(GTK_OBJECT(editEntryData->dialog), "delete_event",
-			   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+			   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 
 	button = gtk_button_new_with_label(_("Ok"));
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(editEntryData->dialog)->action_area),
@@ -1370,7 +1363,7 @@ void DeletePbEntry(void)
 		gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
 		gtk_container_set_border_width(GTK_CONTAINER(dialog), 10);
 		gtk_signal_connect(GTK_OBJECT(dialog), "delete_event",
-				   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+				   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 
 		button = gtk_button_new_with_label(_("Ok"));
 		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->action_area),
@@ -1606,7 +1599,7 @@ static void ChMemType(void)
 			gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
 			gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
 			gtk_signal_connect(GTK_OBJECT(dialog), "delete_event",
-					   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+					   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 
 			button = gtk_button_new_with_label(_("Continue"));
 			gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->action_area),
@@ -1652,7 +1645,7 @@ static void FindFirstEntry(void)
 			gtk_window_set_modal(GTK_WINDOW(findEntryData.dialog), TRUE);
 			gtk_container_set_border_width(GTK_CONTAINER(findEntryData.dialog), 10);
 			gtk_signal_connect(GTK_OBJECT(findEntryData.dialog), "delete_event",
-					   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+					   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 
 			button = gtk_button_new_with_label(_("Find"));
 			gtk_box_pack_start(GTK_BOX(GTK_DIALOG(findEntryData.dialog)->action_area),
@@ -1770,7 +1763,7 @@ static void DialPad(void)
 		gtk_window_set_modal(GTK_WINDOW(dialPadDialog.dialog), TRUE);
 		gtk_container_set_border_width(GTK_CONTAINER(dialPadDialog.dialog), 10);
 		gtk_signal_connect(GTK_OBJECT(dialPadDialog.dialog), "delete_event",
-				   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+				   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 
 		button = gtk_button_new_with_label(_("Dial"));
 		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialPadDialog.dialog)->action_area),
@@ -2021,7 +2014,7 @@ static void CreateProgressDialog(gint maxME, gint maxSM)
 	gtk_window_position(GTK_WINDOW(progressDialog.dialog), GTK_WIN_POS_MOUSE);
 	gtk_window_set_modal(GTK_WINDOW(progressDialog.dialog), TRUE);
 	gtk_signal_connect(GTK_OBJECT(progressDialog.dialog), "delete_event",
-			   GTK_SIGNAL_FUNC(ProgressDialogDeleteEvent), NULL);
+			   GTK_SIGNAL_FUNC(gtk_true), NULL);
 
 	vbox = GTK_DIALOG(progressDialog.dialog)->vbox;
 
@@ -2162,7 +2155,7 @@ static GtkWidget *CreateSaveQuestionDialog(GtkSignalFunc SaveFunc, GtkSignalFunc
 	gtk_window_position(GTK_WINDOW(dialog), GTK_WIN_POS_MOUSE);
 	gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 10);
-	gtk_signal_connect(GTK_OBJECT(dialog), "delete_event", GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+	gtk_signal_connect(GTK_OBJECT(dialog), "delete_event", GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 
 	button = gtk_button_new_with_label(_("Save"));
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->action_area), button, TRUE, TRUE, 10);
@@ -2627,7 +2620,7 @@ static void ExportContacts(void)
 		if (fileDialog == NULL) {
 			fileDialog = gtk_file_selection_new(_("Export to file"));
 			gtk_signal_connect(GTK_OBJECT(fileDialog), "delete_event",
-					   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+					   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 			gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(fileDialog)->ok_button),
 					   "clicked", GTK_SIGNAL_FUNC(OkExportDialog),
 					   (gpointer) fileDialog);
@@ -2711,7 +2704,7 @@ static void ImportContactsFileDialog()
 	if (fileDialog == NULL) {
 		fileDialog = gtk_file_selection_new(_("Import from file"));
 		gtk_signal_connect(GTK_OBJECT(fileDialog), "delete_event",
-				   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+				   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 		gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(fileDialog)->ok_button),
 				   "clicked", GTK_SIGNAL_FUNC(OkImportDialog),
 				   (gpointer) fileDialog);
@@ -3082,7 +3075,7 @@ void GUI_CreateContactsWindow(void)
 	gtk_widget_set_usize(GTK_WIDGET(GUI_ContactsWindow), 436, 220);
 	//gtk_container_set_border_width (GTK_CONTAINER (GUI_ContactsWindow), 10);
 	gtk_signal_connect(GTK_OBJECT(GUI_ContactsWindow), "delete_event",
-			   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+			   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 	gtk_widget_realize(GUI_ContactsWindow);
 
 	accel_group = gtk_accel_group_new();

@@ -664,7 +664,7 @@ static void ShowCalendar(GtkWidget * widget, Date * date)
 	gtk_window_set_modal(GTK_WINDOW(calendarDialog.dialog), TRUE);
 	gtk_container_set_border_width(GTK_CONTAINER(calendarDialog.dialog), 10);
 	gtk_signal_connect(GTK_OBJECT(calendarDialog.dialog), "delete_event",
-			   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+			   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 
 	button = gtk_button_new_with_label(_("Ok"));
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(calendarDialog.dialog)->action_area),
@@ -710,7 +710,7 @@ static void ShowCalTime(GtkWidget * widget, DateTime * date)
 	gtk_window_set_modal(GTK_WINDOW(calTimeDialog.dialog), TRUE);
 	gtk_container_set_border_width(GTK_CONTAINER(calTimeDialog.dialog), 10);
 	gtk_signal_connect(GTK_OBJECT(calTimeDialog.dialog), "delete_event",
-			   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+			   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 
 	button = gtk_button_new_with_label(_("Ok"));
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(calTimeDialog.dialog)->action_area),
@@ -857,7 +857,7 @@ static void AddReminder(void)
 		gtk_window_set_modal(GTK_WINDOW(addReminderDialogData.dialog), TRUE);
 		gtk_container_set_border_width(GTK_CONTAINER(addReminderDialogData.dialog), 10);
 		gtk_signal_connect(GTK_OBJECT(addReminderDialogData.dialog), "delete_event",
-				   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+				   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 
 		button = gtk_button_new_with_label(_("Ok"));
 		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(addReminderDialogData.dialog)->action_area),
@@ -977,7 +977,7 @@ static void AddCall(void)
 		gtk_window_set_modal(GTK_WINDOW(addCallDialogData.dialog), TRUE);
 		gtk_container_set_border_width(GTK_CONTAINER(addCallDialogData.dialog), 10);
 		gtk_signal_connect(GTK_OBJECT(addCallDialogData.dialog), "delete_event",
-				   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+				   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 
 		button = gtk_button_new_with_label(_("Ok"));
 		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(addCallDialogData.dialog)->action_area),
@@ -1117,7 +1117,7 @@ static void AddMeeting(void)
 		gtk_window_set_modal(GTK_WINDOW(addMeetingDialogData.dialog), TRUE);
 		gtk_container_set_border_width(GTK_CONTAINER(addMeetingDialogData.dialog), 10);
 		gtk_signal_connect(GTK_OBJECT(addMeetingDialogData.dialog), "delete_event",
-				   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+				   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 
 		button = gtk_button_new_with_label(_("Ok"));
 		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(addMeetingDialogData.dialog)->action_area),
@@ -1250,7 +1250,7 @@ static void AddBirthday(void)
 		gtk_window_set_modal(GTK_WINDOW(addBirthdayDialogData.dialog), TRUE);
 		gtk_container_set_border_width(GTK_CONTAINER(addBirthdayDialogData.dialog), 10);
 		gtk_signal_connect(GTK_OBJECT(addBirthdayDialogData.dialog), "delete_event",
-				   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+				   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 
 		button = gtk_button_new_with_label(_("Ok"));
 		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(addBirthdayDialogData.dialog)->action_area),
@@ -1411,7 +1411,7 @@ static void DeleteNote(void)
 		gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
 		gtk_container_set_border_width(GTK_CONTAINER(dialog), 10);
 		gtk_signal_connect(GTK_OBJECT(dialog), "delete_event",
-				   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+				   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 
 		button = gtk_button_new_with_label(_("Ok"));
 		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->action_area),
@@ -1528,7 +1528,7 @@ void GUI_CreateCalendarWindow()
 	gtk_window_set_title(GTK_WINDOW(GUI_CalendarWindow), _("Calendar"));
 	gtk_widget_set_usize (GTK_WIDGET (GUI_CalendarWindow), 1000, 400);
 	gtk_signal_connect(GTK_OBJECT(GUI_CalendarWindow), "delete_event",
-			   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+			   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 	gtk_widget_realize(GUI_CalendarWindow);
 
 	accel_group = gtk_accel_group_new();

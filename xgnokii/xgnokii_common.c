@@ -36,12 +36,6 @@ typedef struct {
 static GSList *guiEvents = NULL;
 
 
-inline void DeleteEvent(const GtkWidget * widget, const GdkEvent * event, const gpointer data)
-{
-	gtk_widget_hide(GTK_WIDGET(widget));
-}
-
-
 inline void CancelDialog(const GtkWidget * widget, const gpointer data)
 {
 	gtk_widget_hide(GTK_WIDGET(data));
@@ -58,7 +52,7 @@ void CreateErrorDialog(ErrorDialog * errorDialog, GtkWidget * window)
 	gtk_window_position(GTK_WINDOW(errorDialog->dialog), GTK_WIN_POS_MOUSE);
 	gtk_container_set_border_width(GTK_CONTAINER(errorDialog->dialog), 5);
 	gtk_signal_connect(GTK_OBJECT(errorDialog->dialog), "delete_event",
-			   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+			   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 
 	button = gtk_button_new_with_label(_("Cancel"));
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(errorDialog->dialog)->action_area),
@@ -95,7 +89,7 @@ void CreateInfoDialog(InfoDialog * infoDialog, GtkWidget * window)
 	gtk_window_position(GTK_WINDOW(infoDialog->dialog), GTK_WIN_POS_MOUSE);
 	gtk_container_set_border_width(GTK_CONTAINER(infoDialog->dialog), 5);
 	gtk_signal_connect(GTK_OBJECT(infoDialog->dialog), "delete_event",
-			   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+			   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 
 	hbox = gtk_hbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(infoDialog->dialog)->vbox), hbox);
@@ -123,7 +117,7 @@ void CreateYesNoDialog(YesNoDialog * yesNoDialog, const GtkSignalFunc yesFunc,
 	gtk_window_set_modal(GTK_WINDOW(yesNoDialog->dialog), TRUE);
 	gtk_container_set_border_width(GTK_CONTAINER(yesNoDialog->dialog), 5);
 	gtk_signal_connect(GTK_OBJECT(yesNoDialog->dialog), "delete_event",
-			   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+			   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 
 
 	button = gtk_button_new_with_label(_("Yes"));

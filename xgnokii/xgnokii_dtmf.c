@@ -98,7 +98,7 @@ static void LoadFileDialog()
 	if (fileDialog == NULL) {
 		fileDialog = gtk_file_selection_new(_("Load"));
 		gtk_signal_connect(GTK_OBJECT(fileDialog), "delete_event",
-				   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+				   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 		gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(fileDialog)->ok_button),
 				   "clicked", GTK_SIGNAL_FUNC(OkLoadDialog), (gpointer) fileDialog);
 		gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(fileDialog)->cancel_button),
@@ -163,7 +163,7 @@ static void SaveFileDialog()
 	if (fileDialog == NULL) {
 		fileDialog = gtk_file_selection_new(_("Save"));
 		gtk_signal_connect(GTK_OBJECT(fileDialog), "delete_event",
-				   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+				   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 		gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(fileDialog)->ok_button),
 				   "clicked", GTK_SIGNAL_FUNC(OkSaveDialog), (gpointer) fileDialog);
 		gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(fileDialog)->cancel_button),
@@ -230,7 +230,7 @@ void GUI_CreateDTMFWindow()
 	gtk_window_set_title(GTK_WINDOW(GUI_DTMFWindow), _("Dial Tone"));
 	//gtk_widget_set_usize (GTK_WIDGET (GUI_DTMFWindow), 436, 220);
 	gtk_signal_connect(GTK_OBJECT(GUI_DTMFWindow), "delete_event",
-			   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+			   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 	gtk_widget_realize(GUI_DTMFWindow);
 
 	accel_group = gtk_accel_group_new();

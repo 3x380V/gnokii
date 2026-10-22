@@ -1507,7 +1507,7 @@ void GUI_CreateLogosWindow(void)
 	gtk_window_set_policy(GTK_WINDOW(GUI_LogosWindow), 1, 1, 1);
 	gtk_window_set_title(GTK_WINDOW(GUI_LogosWindow), _("Logos"));
 	gtk_signal_connect(GTK_OBJECT(GUI_LogosWindow), "delete_event",
-			   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+			   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 	gtk_widget_realize(GUI_LogosWindow);
 
 	CreateErrorDialog(&errorDialog, GUI_LogosWindow);

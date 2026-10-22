@@ -52,20 +52,19 @@ static inline void DestroyCListData(gpointer data)
 }
 
 
-static void DeleteSelectContactDialog(GtkWidget * widget, GdkEvent * event,
-				      SelectContactData * data)
-{
-	gtk_widget_destroy(GTK_WIDGET(data->clist));
-	gtk_widget_destroy(GTK_WIDGET(data->clistScrolledWindow));
-	gtk_widget_destroy(GTK_WIDGET(widget));
-}
-
-
 static void CancelSelectContactDialog(GtkWidget * widget, SelectContactData * data)
 {
 	gtk_widget_destroy(GTK_WIDGET(data->clist));
 	gtk_widget_destroy(GTK_WIDGET(data->clistScrolledWindow));
 	gtk_widget_destroy(GTK_WIDGET(data->dialog));
+}
+
+
+static gboolean DeleteSelectContactDialog(GtkWidget * widget, GdkEvent * event,
+					  SelectContactData * data)
+{
+	CancelSelectContactDialog(widget, data);
+	return TRUE;
 }
 
 
@@ -358,7 +357,7 @@ static void ImportSpeedDial(void)
 	if (fileDialog == NULL) {
 		fileDialog = gtk_file_selection_new(_("Import from file"));
 		gtk_signal_connect(GTK_OBJECT(fileDialog), "delete_event",
-				   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+				   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 		gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(fileDialog)->ok_button),
 				   "clicked", GTK_SIGNAL_FUNC(OkImportDialog),
 				   (gpointer) fileDialog);
@@ -437,7 +436,7 @@ static void ExportSpeedDial(void)
 		if (fileDialog == NULL) {
 			fileDialog = gtk_file_selection_new(_("Export to file"));
 			gtk_signal_connect(GTK_OBJECT(fileDialog), "delete_event",
-					   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+					   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 			gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(fileDialog)->ok_button),
 					   "clicked", GTK_SIGNAL_FUNC(OkExportDialog),
 					   (gpointer) fileDialog);
@@ -513,7 +512,7 @@ void GUI_CreateSpeedDialWindow(void)
 	gtk_widget_set_usize(GTK_WIDGET(GUI_SpeedDialWindow), 350, 220);
 	//gtk_container_set_border_width (GTK_CONTAINER (GUI_SpeedDialWindow), 10);
 	gtk_signal_connect(GTK_OBJECT(GUI_SpeedDialWindow), "delete_event",
-			   GTK_SIGNAL_FUNC(DeleteEvent), NULL);
+			   GTK_SIGNAL_FUNC(gtk_widget_hide_on_delete), NULL);
 	gtk_widget_realize(GUI_SpeedDialWindow);
 
 	accel_group = gtk_accel_group_new();

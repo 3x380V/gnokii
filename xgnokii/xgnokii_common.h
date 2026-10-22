@@ -61,7 +61,6 @@ extern void CreateErrorDialog(ErrorDialog *, GtkWidget *);
 extern void CreateInfoDialog(InfoDialog *, GtkWidget *);
 extern void CreateYesNoDialog(YesNoDialog *, const GtkSignalFunc, const GtkSignalFunc, GtkWidget *);
 extern GtkWidget *NewPixmap(gchar **, GdkWindow *, GdkColor *);
-extern void DeleteEvent(const GtkWidget *, const GdkEvent *, const gpointer);
 extern gint LaunchProcess(const gchar *, const gchar *, const gint, const gint, const gint);
 extern void RemoveZombie(const gint);
 extern gint strrncmp(const gchar * const, const gchar * const, size_t);
