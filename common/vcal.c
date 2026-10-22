@@ -25,6 +25,9 @@ static const char gnokii_version[] = VERSION;
 /* needs gnokii-internal.h for string_base64() and utf8_encode() */
 #  include "gnokii-internal.h"
 #  include <libical/ical.h>
+#  if ICAL_MAJOR_VERSION < 4
+#    define icalduration_extend icaltime_add
+#  endif
 /* mother's little helpers */
 static int iterate_cal(icalcomponent *parent, int depth, int *count, icalcomponent **result, icalcomponent_kind kind);
 static const char *comp_get_category(icalcomponent *comp);
@@ -117,7 +120,7 @@ GNOKII_API char *gn_calnote2icalstr(gn_calnote *calnote)
 	vevent = icalcomponent_vanew(ICAL_VEVENT_COMPONENT,
 				     icalproperty_new_uid(compuid),
 				     icalproperty_new_categories("GNOKII"),
-				     0);
+				     NULL);
 	if (!vevent) {
 		dprintf("ERROR in icalcomponent_vanew() creating VEVENT\n");
 		return NULL;
@@ -171,6 +174,7 @@ GNOKII_API char *gn_calnote2icalstr(gn_calnote *calnote)
 	icalcomponent_add_property(vevent, icalproperty_new_dtstart(stime));
 
 	if (calnote->recurrence) {
+		icalproperty *prop;
 		char rrule[64];
 		char *freq;
 		int interval = 1;
@@ -205,7 +209,9 @@ GNOKII_API char *gn_calnote2icalstr(gn_calnote *calnote)
 			snprintf(rrule, sizeof(rrule), "FREQ=%s;INTERVAL=%d", freq, interval);
 		else
 			snprintf(rrule, sizeof(rrule), "FREQ=%s;COUNT=%d;INTERVAL=%d", freq, calnote->occurrences, interval);
-		icalcomponent_add_property(vevent, icalproperty_new_rrule(icalrecurrencetype_from_string(rrule)));
+		prop = icalproperty_new(ICAL_RRULE_PROPERTY);
+		icalproperty_set_value_from_string(prop, rrule, "RECUR");
+		icalcomponent_add_property(vevent, prop);
 	}
 norecurrence:
 
@@ -239,7 +245,7 @@ norecurrence:
 				    icalproperty_new_version("2.0"),
 				    icalproperty_new_prodid(get_prodid()),
 				    vevent,
-				    0);
+				    NULL);
 
 	if (pIcal) {
 		char *icalstrbuf = NULL;
@@ -476,7 +482,7 @@ static int gn_ical2calnote_real(icalcomponent *comp, gn_calnote *calnote, int id
 					}
 					if (!(icaldurationtype_is_bad_duration(trigger_value.duration) ||
 							icaldurationtype_is_null_duration(trigger_value.duration))) {
-						alarm_start = icaltime_add(alarm_start, trigger_value.duration);
+						alarm_start = icalduration_extend(alarm_start, trigger_value.duration);
 					}
 					calnote->alarm.enabled = 1;
 					calnote->alarm.timestamp.year = alarm_start.year;
@@ -495,8 +501,17 @@ static int gn_ical2calnote_real(icalcomponent *comp, gn_calnote *calnote, int id
 
 		/* recurrence */
 		rrule = icalcomponent_get_first_property(compresult, ICAL_RRULE_PROPERTY);
+#if ICAL_MAJOR_VERSION >= 4
+		/* empty RRULE property carries no recurrence */
+		if (rrule && !icalproperty_get_rrule(rrule))
+			rrule = NULL;
+#endif
 		if (rrule) {
+#if ICAL_MAJOR_VERSION >= 4
+			recur = *icalproperty_get_rrule(rrule);
+#else
 			recur = icalproperty_get_rrule(rrule);
+#endif
 			calnote->occurrences = recur.count;
 			switch (recur.freq) {
 			case ICAL_SECONDLY_RECURRENCE:
@@ -647,8 +662,8 @@ GNOKII_API char * gn_todo2icalstr(gn_todo *ctodo)
 							icalproperty_new_categories("GNOKII"),
 							icalproperty_new_priority(ctodo->priority),
 							icalproperty_new_summary(ctodo->text),
-							0),
-				    0);
+							NULL),
+				    NULL);
 
 	if (pIcal) {
 		char *icalstrbuf = NULL;
