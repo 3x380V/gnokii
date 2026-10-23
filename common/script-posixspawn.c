@@ -37,7 +37,7 @@ int device_script(int fd, int connect, struct gn_statemachine *state)
 	struct gn_cfg_header *h;
 	posix_spawn_file_actions_t fa;
 	pid_t pid;
-	int cnt, ret, status;
+	int i, cnt, ret, status;
 	size_t len;
 
 	if (connect) {
@@ -59,21 +59,21 @@ int device_script(int fd, int connect, struct gn_statemachine *state)
 		cnt++;
 	}
 
-	env = malloc(len + sizeof(char *));
-	if (!env) {
+	envp = malloc(len + sizeof(char *));
+	if (!envp) {
 		fprintf(stderr, _("device_script(\"%s\"): out of memory\n"), scriptname);
 		goto out;
 	}
 
-	envp = &env;
-	env += sizeof(char *) * (cnt + 1);
+	env = (char *)(envp + cnt + 1);
+	i = 0;
 	h = gn_cfg_info;
 	cfg_foreach_entry(section, h, e) {
-		*envp++ = env;
+		envp[i++] = env;
 		env += sprintf(env, "%s=%s", e->key, e->value);
 		env++;
 	}
-	*envp = NULL;
+	envp[i] = NULL;
 
 	argv[0] = "sh";
 	argv[1] = "-c";
@@ -109,7 +109,7 @@ int device_script(int fd, int connect, struct gn_statemachine *state)
 out_destroy:
 	posix_spawn_file_actions_destroy(&fa);
 out_free:
-	free(env);
+	free(envp);
 out:
 	return ret;
 }
