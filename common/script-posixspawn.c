@@ -37,7 +37,7 @@ int device_script(int fd, int connect, struct gn_statemachine *state)
 	struct gn_cfg_header *h;
 	posix_spawn_file_actions_t fa;
 	pid_t pid;
-	int i, cnt, ret, status;
+	int i, cnt, err, ret, status;
 	size_t len;
 
 	if (connect) {
@@ -80,21 +80,21 @@ int device_script(int fd, int connect, struct gn_statemachine *state)
 	argv[2] = (char *)scriptname;
 	argv[3] = NULL;
 
-	if (posix_spawn_file_actions_init(&fa)) {
+	if ((err = posix_spawn_file_actions_init(&fa))) {
 		fprintf(stderr, _("device_script(\"%s\"): file descriptor preparation failure: %s\n"),
-			scriptname, strerror(errno));
+			scriptname, strerror(err));
 		goto out_free;
 	}
-	if (posix_spawn_file_actions_adddup2(&fa, fd, STDIN_FILENO) ||
-	    posix_spawn_file_actions_adddup2(&fa, fd, STDOUT_FILENO) ||
-	    posix_spawn_file_actions_addclose(&fa, fd)) {
+	if ((err = posix_spawn_file_actions_adddup2(&fa, fd, STDIN_FILENO)) ||
+	    (err = posix_spawn_file_actions_adddup2(&fa, fd, STDOUT_FILENO)) ||
+	    (err = posix_spawn_file_actions_addclose(&fa, fd))) {
 		fprintf(stderr, _("device_script(\"%s\"): file descriptor preparation failure: %s\n"),
-			scriptname, strerror(errno));
+			scriptname, strerror(err));
 		goto out_destroy;
 	}
-	if (posix_spawn(&pid, "/bin/sh", &fa, NULL, argv, envp)) {
+	if ((err = posix_spawn(&pid, "/bin/sh", &fa, NULL, argv, envp))) {
 		fprintf(stderr, _("device_script(\"%s\"): script execution failure: %s\n"),
-			scriptname, strerror(errno));
+			scriptname, strerror(err));
 		goto out_destroy;
 	}
 
