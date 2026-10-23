@@ -383,6 +383,8 @@ gn_error phonet_initialise(struct gn_statemachine *state)
 
 	if (!verify_max_message_len(PHONET_FRAME_MAX_LENGTH, FBUSINST(state))) {
 		dprintf("PHONET: Failed to initalize initial incoming buffer for %d bytes\n", PHONET_FRAME_MAX_LENGTH);
+		free(FBUSINST(state));
+		FBUSINST(state) = NULL;
 		return GN_ERR_MEMORYFULL;
 	}
 
