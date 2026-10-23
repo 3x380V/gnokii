@@ -88,13 +88,14 @@ static bool phonet_open(struct gn_statemachine *state)
 	if (state->config.connection_type == GN_CT_Bluetooth) {
 		device_write(&init_sequence, 7, state);
 		while (total < 7) {
-			n = device_read(&init_resp + total, 7 - total, state);
+			n = device_read(init_resp + total, 7 - total, state);
 			if (n > 0)
 				total += n;
 		}
-		for (i = 0; i < n; i++) {
+		for (i = 0; i < total; i++) {
 			if (init_resp[i] != init_pattern[i]) {
 				dprintf("Incorrect byte in the answer\n");
+				device_close(state);
 				return false;
 			}
 		}
