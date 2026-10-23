@@ -30,7 +30,7 @@ struct instance_data {
 #define SELF(m) (((struct instance_data *)(instance))->m)
 
 /* Open the serial port and store the settings. */
-void* serial_init(const char *file, int oflags)
+static void *serial_init(const char *file, int oflags)
 {
 	HANDLE hPhone;
 	COMMTIMEOUTS CommTimeOuts;

@@ -83,7 +83,7 @@ struct instance_data {
  * Open the serial port and store the settings.
  * Returns instance data on success, or NULL if an error occurred.
  */
-void* serial_init(const char *file, int oflag)
+static void *serial_init(const char *file, int oflag)
 {
 	int fd, ret;
 	struct instance_data *data;

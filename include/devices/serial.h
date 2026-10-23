@@ -16,8 +16,6 @@
 #include "compat.h"
 #include "gnokii.h"
 
-void* serial_init(const char *file, int oflag);
-
 void* serial_open(gn_config *cfg, int with_odd_parity, int with_async);
 void serial_close(void *instance);
 

@@ -26,13 +26,7 @@
 
 void* tekram_open(gn_config *cfg, int with_odd_parity, int with_async)
 {
-#if defined(O_NOCTTY) && defined(O_NONBLOCK) && defined (O_RDWR)
-	return serial_init(cfg->port_device, O_RDWR | O_NOCTTY | O_NONBLOCK);
-#elif defined (O_RDWR)
-	return serial_init(cfg->port_device, O_RDWR);
-#else
-	return serial_init(cfg->port_device, 0);
-#endif
+	return serial_open(cfg, with_odd_parity, with_async);
 }
 
 void tekram_close(void *instance)
