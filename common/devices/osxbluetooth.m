@@ -39,7 +39,7 @@
 
 - (BOOL)connect:(const char*)addr chid:(BluetoothRFCOMMChannelID)channelID {
     NSString *address = [[[NSString alloc] initWithCString:addr encoding:NSASCIIStringEncoding] autorelease];
-    IOBluetoothDevice* btDevice = [[IOBluetoothDevice deviceWithAddressString:address] autorelease];
+    IOBluetoothDevice* btDevice = [IOBluetoothDevice deviceWithAddressString:address];
     return btDevice != nil &&
     [btDevice openRFCOMMChannelSync:&channel withChannelID:channelID delegate:self] == kIOReturnSuccess; // after connection it is established.. the delegates methoed are triggered.
 }
@@ -118,17 +118,24 @@
 
 void* bluetooth_open(gn_config *cfg, int with_odd_parity, int with_async)
 {
+    GnokiiOSXBluetooth **data;
     GnokiiOSXBluetooth *q = [[GnokiiOSXBluetooth alloc] init];
     if (![q connect:cfg->port_device chid:(BluetoothRFCOMMChannelID)cfg->rfcomm_cn]) { // after connection it is established.. the delegates methods are triggered.
         [q release];
         return NULL;
     }
-    return q;
+    data = malloc(sizeof(*data));
+    if (!data) {
+        [q release];
+        return NULL;
+    }
+    *data = q;
+    return data;
 }
 
 size_t bluetooth_write(void *instance, const __ptr_t bytes, size_t size)
 {
-    GnokiiOSXBluetooth *q = instance;
+    GnokiiOSXBluetooth *q = *(GnokiiOSXBluetooth **)instance;
     sleep(2);
     if (![q write:bytes length:size])
         return -1;
@@ -138,18 +145,18 @@ size_t bluetooth_write(void *instance, const __ptr_t bytes, size_t size)
 
 size_t bluetooth_read(void *instance, __ptr_t bytes, size_t size)
 {
-    GnokiiOSXBluetooth *q = instance;
+    GnokiiOSXBluetooth *q = *(GnokiiOSXBluetooth **)instance;
     return [q read:bytes size:size];
 }
 
 int bluetooth_select(void *instance, struct timeval *timeout)
 {
-    GnokiiOSXBluetooth *q = instance;
+    GnokiiOSXBluetooth *q = *(GnokiiOSXBluetooth **)instance;
     return [q select:(NSTimeInterval)(timeout->tv_sec + timeout->tv_usec / 1000000.0)];
 }
 
 void bluetooth_close(void *instance)
 {
-    GnokiiOSXBluetooth *q = instance;
+    GnokiiOSXBluetooth *q = *(GnokiiOSXBluetooth **)instance;
     [q release];
 }
