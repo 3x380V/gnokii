@@ -375,7 +375,6 @@ static void usbfbus_free_interfaces(fbus_usb_interface *iface)
 	free(iface->data_interface_idle);
 	free(iface->data_interface_active);
 	free(iface->interface);
-	free(iface);
 }
 
 /*
@@ -481,6 +480,7 @@ void* fbusdku2usb_open(gn_config *cfg, int with_odd_parity, int with_async)
 		if (usbfbus_connect_request(iface))
 			return iface;
 		usbfbus_free_interfaces(iface);
+		free(iface);
 	}
 
 	return NULL;
