@@ -399,6 +399,7 @@ gn_error phonet_initialise(struct gn_statemachine *state)
 		break;
 	}
 	if (error != GN_ERR_NONE) {
+		phonet_cleanup(state);
 		free(FBUSINST(state));
 		FBUSINST(state) = NULL;
 		return error;
