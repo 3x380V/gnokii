@@ -98,7 +98,18 @@ int device_script(int fd, int connect, struct gn_statemachine *state)
 		goto out_destroy;
 	}
 
-	if (pid != waitpid(pid, &status, 0) && WIFEXITED(status) && !WEXITSTATUS(status)) {
+	while (waitpid(pid, &status, 0) < 0) {
+		if (errno == EINTR)
+			continue;
+		/* Exit status is lost when the child was reaped elsewhere */
+		if (errno == ECHILD)
+			ret = 0;
+		else
+			fprintf(stderr, _("device_script(\"%s\"): waitpid() failure: %s\n"),
+				scriptname, strerror(errno));
+		goto out_destroy;
+	}
+	if (!WIFEXITED(status) || WEXITSTATUS(status)) {
 		fprintf(stderr, _("device_script(\"%s\"): child script execution failure: %s, exit code=%d\n"), scriptname,
 			(WIFEXITED(status) ? _("normal exit") : _("abnormal exit")),
 			(WIFEXITED(status) ? WEXITSTATUS(status) : -1));
