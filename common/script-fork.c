@@ -61,7 +61,16 @@ int device_script(int fd, int connect, struct gn_statemachine *state)
 		/* NOTREACHED */
 
 	default:
-		if (pid == waitpid(pid, &status, 0 /* options */) && WIFEXITED(status) && !WEXITSTATUS(status))
+		while (waitpid(pid, &status, 0 /* options */) < 0) {
+			if (errno == EINTR)
+				continue;
+			/* Exit status is lost when the child was reaped elsewhere */
+			if (errno == ECHILD)
+				return 0;
+			fprintf(stderr, _("device_script(\"%s\"): waitpid() failure: %s\n"), scriptname, strerror(errno));
+			return -1;
+		}
+		if (WIFEXITED(status) && !WEXITSTATUS(status))
 			return 0;
 		fprintf(stderr, _("device_script(\"%s\"): child script execution failure: %s, exit code=%d\n"), scriptname,
 			(WIFEXITED(status) ? _("normal exit") : _("abnormal exit")),
