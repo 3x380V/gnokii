@@ -59,6 +59,7 @@ static int verify_max_message_len(int len, phonet_incoming_message *i)
 static bool phonet_open(struct gn_statemachine *state)
 {
 	int result, i, n, total = 0;
+	struct timeval timeout;
 	unsigned char init_sequence[] = { FBUS_PHONET_BLUETOOTH_FRAME_ID,
 					  FBUS_DEVICE_PHONE,
 					  FBUS_PHONET_BLUETOOTH_DEVICE_PC,
@@ -88,9 +89,20 @@ static bool phonet_open(struct gn_statemachine *state)
 	if (state->config.connection_type == GN_CT_Bluetooth) {
 		device_write(&init_sequence, 7, state);
 		while (total < 7) {
+			/* Give up when the phone does not answer */
+			timeout.tv_sec = 3;
+			timeout.tv_usec = 0;
+			if (device_select(&timeout, state) <= 0)
+				break;
 			n = device_read(init_resp + total, 7 - total, state);
-			if (n > 0)
-				total += n;
+			if (n <= 0)
+				break;
+			total += n;
+		}
+		if (total < 7) {
+			dprintf("Incomplete answer\n");
+			device_close(state);
+			return false;
 		}
 		for (i = 0; i < total; i++) {
 			if (init_resp[i] != init_pattern[i]) {
