@@ -24,6 +24,13 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+#ifdef __APPLE__
+#  include <crt_externs.h>
+#  define environ (*_NSGetEnviron())
+#else
+extern char **environ;
+#endif
+
 #define cfg_foreach_entry(section, header, entry) \
 	for (h = gn_cfg_info; header != NULL; header = header->next) \
 		if (strcmp(section, h->section) == 0) \
@@ -37,7 +44,7 @@ int device_script(int fd, int connect, struct gn_statemachine *state)
 	struct gn_cfg_header *h;
 	posix_spawn_file_actions_t fa;
 	pid_t pid;
-	int i, cnt, err, ret, status;
+	int i, j, n, cnt, err, ret, status;
 	size_t len;
 
 	if (connect) {
@@ -59,19 +66,31 @@ int device_script(int fd, int connect, struct gn_statemachine *state)
 		cnt++;
 	}
 
-	envp = malloc(len + sizeof(char *));
+	for (n = 0; environ && environ[n]; n++)
+		;
+	envp = malloc(len + (n + 1) * sizeof(char *));
 	if (!envp) {
 		fprintf(stderr, _("device_script(\"%s\"): out of memory\n"), scriptname);
 		goto out;
 	}
 
-	env = (char *)(envp + cnt + 1);
+	env = (char *)(envp + n + cnt + 1);
 	i = 0;
 	h = gn_cfg_info;
 	cfg_foreach_entry(section, h, e) {
 		envp[i++] = env;
 		env += sprintf(env, "%s=%s", e->key, e->value);
 		env++;
+	}
+	/* Inherit the environment, configured variables take precedence */
+	for (n = 0; environ && environ[n]; n++) {
+		for (j = 0; j < cnt; j++) {
+			len = strchr(envp[j], '=') - envp[j] + 1;
+			if (!strncmp(environ[n], envp[j], len))
+				break;
+		}
+		if (j == cnt)
+			envp[i++] = environ[n];
 	}
 	envp[i] = NULL;
 
